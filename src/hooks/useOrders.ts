@@ -19,7 +19,7 @@ export const useOrders = () => {
   const placeOrder = (items: CartItem[]): string => {
     const orderId = `order_${Date.now()}`;
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
+
     const newOrder: Order = {
       id: orderId,
       items,
@@ -40,6 +40,10 @@ export const useOrders = () => {
     );
   };
 
+  const cancelOrder = (orderId: string) => {
+    updateOrderStatus(orderId, 'cancelled');
+  };
+
   const getOrderById = (orderId: string) => {
     return orders.find(order => order.id === orderId);
   };
@@ -48,6 +52,7 @@ export const useOrders = () => {
     orders,
     placeOrder,
     updateOrderStatus,
+    cancelOrder,
     getOrderById
   };
 };

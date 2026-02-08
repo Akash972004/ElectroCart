@@ -5,6 +5,16 @@ import { ShoppingCart, User, Home, List, Package, LogOut } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from './ui/button';
+import { ModeToggle } from './ModeToggle';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,17 +36,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="fixed top-4 left-0 right-0 z-50 flex justify-center w-full px-4">
+      <div className="w-full max-w-7xl bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border border-gray-200 dark:border-slate-800 shadow-xl rounded-full px-6 sm:px-8 transition-colors duration-300">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">EC</span>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              ElectroCart
-            </span>
+            <img src="/logo.png" alt="ElectroCart Logo" className="h-24 w-auto max-w-[200px] object-contain scale-150" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -45,11 +50,10 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive(link.path)
-                    ? 'text-blue-400 bg-slate-800'
-                    : 'text-gray-300 hover:text-white hover:bg-slate-800'
-                }`}
+                className={`flex items-center space-x-1 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive(link.path)
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 font-semibold shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                  }`}
               >
                 <link.icon size={18} />
                 <span>{link.name}</span>
@@ -57,38 +61,70 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Cart and User Icons */}
-          <div className="flex items-center space-x-4">
+          {/* Cart, User Icons, and Mode Toggle */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <ModeToggle />
+
             <Link
               to="/cart"
-              className="relative p-2 text-gray-300 hover:text-white transition-colors"
+              className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full"
             >
               <ShoppingCart size={24} />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
                   {totalItems}
                 </span>
               )}
             </Link>
 
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-300 hidden sm:block">
-                  Hello, {user?.name}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="p-2 text-gray-300 hover:text-white"
-                >
-                  <LogOut size={20} />
-                </Button>
-              </div>
+            {isAuthenticated && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10 border border-gray-200 dark:border-slate-800">
+                      <AvatarImage
+                        src={user.gender === 'female'
+                          ? `https://avatar.iran.liara.run/public/girl?username=${user.email}`
+                          : `https://avatar.iran.liara.run/public/boy?username=${user.email}`}
+                        alt={user.name}
+                      />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">
+                      <User size={16} className="mr-2" />
+                      My Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders" className="cursor-pointer">
+                      <Package size={16} className="mr-2" />
+                      Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-red-600 cursor-pointer" onClick={handleLogout}>
+                    <LogOut size={16} className="mr-2" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link
                 to="/login"
-                className="p-2 text-gray-300 hover:text-white transition-colors"
+                className="p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full"
               >
                 <User size={24} />
               </Link>
@@ -97,7 +133,7 @@ const Navbar = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-300 hover:text-white"
+              className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -108,35 +144,36 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-700">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive(link.path)
-                    ? 'text-blue-400 bg-slate-800'
-                    : 'text-gray-300 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <link.icon size={18} />
-                <span>{link.name}</span>
-              </Link>
-            ))}
-            {isAuthenticated && (
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuOpen(false);
-                }}
-                className="w-full justify-start px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800"
-              >
-                <LogOut size={18} className="mr-2" />
-                Logout
-              </Button>
-            )}
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-white dark:bg-slate-950 shadow-xl rounded-2xl mx-4 p-4 border border-gray-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-5">
+            <div className="flex flex-col space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive(link.path)
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-900'
+                    }`}
+                >
+                  <link.icon size={20} />
+                  <span>{link.name}</span>
+                </Link>
+              ))}
+              {isAuthenticated && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full justify-start px-4 py-3 text-slate-600 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl"
+                >
+                  <LogOut size={20} className="mr-3" />
+                  Logout
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>

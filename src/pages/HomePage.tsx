@@ -1,14 +1,13 @@
-
 import Hero from '../components/Hero';
-import FeaturedProducts from '../components/FeaturedProducts';
-import Categories from '../components/Categories';
+import FeaturedCategories from '../components/FeaturedCategories';
+import TopRatedProducts from '../components/TopRatedProducts';
 
 const HomePage = () => {
   return (
     <div className="min-h-screen">
       <Hero />
-      <FeaturedProducts />
-      <Categories />
+      <TopRatedProducts />
+      <FeaturedCategories />
     </div>
   );
 };

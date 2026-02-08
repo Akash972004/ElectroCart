@@ -2,94 +2,118 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useToast } from '../components/ui/use-toast';
 import { useAuth } from '../hooks/useAuth';
+import BackButton from '../components/BackButton';
+import { Loader2 } from 'lucide-react';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const success = login(formData.email, formData.password);
-    
-    if (success) {
-      toast({
-        title: "Success",
-        description: "Logged in successfully!"
-      });
-      navigate('/');
-    } else {
-      toast({
-        title: "Error",
-        description: "Invalid email or password",
-        variant: "destructive"
-      });
-    }
-  };
+    setLoading(true);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    // Simulate API call
+    setTimeout(() => {
+      const success = login(email, password);
+      setLoading(false);
+
+      if (success) {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+        navigate('/');
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid email or password",
+          variant: "destructive"
+        });
+      }
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16">
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center p-4 relative transition-colors duration-300">
+      {/* Back Button positioned outside */}
+      <div className="absolute top-28 left-8">
+        <BackButton />
+      </div>
+
+      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 w-full max-w-5xl">
+        {/* Brand Section */}
+        <div className="flex-1 text-center md:text-left space-y-6">
+          <Link to="/" className="inline-block">
+            <img src="/logo.png" alt="ElectroCart Logo" className="h-auto w-48 md:w-64 lg:w-80 mx-auto md:mx-0 hover:scale-105 transition-transform duration-300" />
+          </Link>
+          <div className="space-y-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
               Welcome Back
-            </CardTitle>
-            <p className="text-gray-600">Sign in to your account</p>
+            </h1>
+            <p className="text-base text-gray-600 dark:text-gray-400 max-w-sm mx-auto md:mx-0">
+              Enter your credentials to access your personalized shopping experience.
+            </p>
+          </div>
+        </div>
+
+        {/* Form Section */}
+        <Card className="w-full max-w-md border-gray-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900/50 backdrop-blur-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+            <CardDescription className="text-center">
+              Enter your email and password to access your account
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="your@email.com"
+                  placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                Sign In
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 font-semibold h-11" type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
-              <div className="text-center">
-                <p className="text-gray-600">
+              <div className="text-center text-sm pt-2">
+                <span className="text-gray-600 dark:text-gray-400">
                   Don't have an account?{' '}
-                  <Link to="/signup" className="text-blue-600 hover:underline">
-                    Sign up
-                  </Link>
-                </p>
+                </span>
+                <Link to="/signup" className="text-blue-600 hover:underline font-bold transition-colors">
+                  Sign up
+                </Link>
               </div>
             </form>
           </CardContent>

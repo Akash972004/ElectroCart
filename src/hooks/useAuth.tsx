@@ -5,13 +5,17 @@ interface User {
   id: string;
   name: string;
   email: string;
+  gender: 'male' | 'female';
+  phone?: string;
+  location?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => boolean;
-  signup: (name: string, email: string, password: string) => boolean;
+  signup: (name: string, email: string, password: string, gender: 'male' | 'female') => boolean;
   logout: () => void;
+  updateProfile: (data: Partial<User>) => void;
   isAuthenticated: boolean;
 }
 
@@ -33,7 +37,7 @@ export const useAuth = () => {
     const login = (email: string, password: string): boolean => {
       const users = JSON.parse(localStorage.getItem('electroUsers') || '[]');
       const foundUser = users.find((u: any) => u.email === email && u.password === password);
-      
+
       if (foundUser) {
         const { password: _, ...userWithoutPassword } = foundUser;
         setUser(userWithoutPassword);
@@ -43,9 +47,9 @@ export const useAuth = () => {
       return false;
     };
 
-    const signup = (name: string, email: string, password: string): boolean => {
+    const signup = (name: string, email: string, password: string, gender: 'male' | 'female'): boolean => {
       const users = JSON.parse(localStorage.getItem('electroUsers') || '[]');
-      
+
       if (users.find((u: any) => u.email === email)) {
         return false; // User already exists
       }
@@ -54,16 +58,30 @@ export const useAuth = () => {
         id: `user_${Date.now()}`,
         name,
         email,
-        password
+        password,
+        gender
       };
 
       users.push(newUser);
       localStorage.setItem('electroUsers', JSON.stringify(users));
-      
-      const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
+
       localStorage.setItem('electroUser', JSON.stringify(userWithoutPassword));
       return true;
+    };
+
+    const updateProfile = (data: Partial<User>) => {
+      if (!user) return;
+
+      const updatedUser = { ...user, ...data };
+      setUser(updatedUser);
+      localStorage.setItem('electroUser', JSON.stringify(updatedUser)); // Update current session
+
+      // Update in the 'users' list as well
+      const users = JSON.parse(localStorage.getItem('electroUsers') || '[]');
+      const updatedUsers = users.map((u: any) =>
+        u.email === user.email ? { ...u, ...data } : u
+      );
+      localStorage.setItem('electroUsers', JSON.stringify(updatedUsers));
     };
 
     const logout = () => {
@@ -76,6 +94,7 @@ export const useAuth = () => {
       login,
       signup,
       logout,
+      updateProfile,
       isAuthenticated: !!user
     };
   }
