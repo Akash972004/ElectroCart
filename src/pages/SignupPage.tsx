@@ -1,13 +1,19 @@
-
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { useToast } from '../components/ui/use-toast';
-import { useAuth } from '../hooks/useAuth';
-import BackButton from '../components/BackButton';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { useToast } from "../components/ui/use-toast";
+import { useAuth } from "../hooks/useAuth";
+import BackButton from "../components/BackButton";
 import {
   Select,
   SelectContent,
@@ -18,11 +24,11 @@ import {
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    gender: 'male' as 'male' | 'female'
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    gender: "male" as "male" | "female",
   });
   const { signup } = useAuth();
   const { toast } = useToast();
@@ -35,7 +41,7 @@ const SignupPage = () => {
       toast({
         title: "Error",
         description: "Passwords do not match",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -44,24 +50,29 @@ const SignupPage = () => {
       toast({
         title: "Error",
         description: "Password must be at least 6 characters",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
-    const success = signup(formData.name, formData.email, formData.password, formData.gender);
+    const success = signup(
+      formData.name,
+      formData.email,
+      formData.password,
+      formData.gender,
+    );
 
     if (success) {
       toast({
         title: "Success",
-        description: "Account created successfully!"
+        description: "Account created successfully!",
       });
-      navigate('/');
+      navigate("/");
     } else {
       toast({
         title: "Error",
         description: "Email already exists",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -69,45 +80,48 @@ const SignupPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center p-4 relative transition-colors duration-300">
-      {/* Back Button positioned outside */}
-      <div className="absolute top-28 left-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-start md:items-center justify-center p-4 pt-24 md:pt-12 relative transition-colors duration-300">
+      {/* Back Button positioned outside - more compact on small screens */}
+      <div className="hidden md:block absolute md:top-28 md:left-8">
         <BackButton />
       </div>
 
-      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 w-full max-w-5xl">
+      <div className="flex flex-col md:flex-row items-center md:items-center gap-8 md:gap-16 w-full max-w-5xl">
         {/* Brand Section */}
-        <div className="flex-1 text-center md:text-left space-y-6 order-last md:order-first">
+        <div className="flex-1 text-center md:text-left space-y-6 order-last md:order-first px-4 md:px-0">
           <Link to="/" className="inline-block">
-            <img src="/logo.png" alt="ElectroCart Logo" className="h-auto w-48 md:w-64 lg:w-80 mx-auto md:mx-0 hover:scale-105 transition-transform duration-300" />
+            <img
+              src="/logo.png"
+              alt="ElectroCart Logo"
+              className="h-auto w-48 md:w-64 lg:w-80 mx-auto md:mx-0 hover:scale-105 transition-transform duration-300"
+            />
           </Link>
           <div className="space-y-4">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
               Join Us Today
             </h1>
             <p className="text-base text-gray-600 dark:text-gray-400 max-w-sm mx-auto md:mx-0">
-              Create an account to unlock exclusive deals, track orders, and faster checkout.
+              Create an account to unlock exclusive deals, track orders, and
+              faster checkout.
             </p>
           </div>
         </div>
 
         {/* Form Section */}
-        <Card className="w-full max-w-md border-gray-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900/50 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-1">
+        <Card className="w-full max-w-md border-gray-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900/50 backdrop-blur-sm mx-auto">
+          <CardHeader className="text-center space-y-0.5">
             <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
               Create Account
             </CardTitle>
-            <CardDescription>
-              Join ElectroCart community
-            </CardDescription>
+            <CardDescription>Join ElectroCart community</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2">
               <div>
                 <Label htmlFor="name">Full Name</Label>
                 <Input
@@ -161,7 +175,9 @@ const SignupPage = () => {
                 <Label htmlFor="gender">Gender</Label>
                 <Select
                   value={formData.gender}
-                  onValueChange={(value: 'male' | 'female') => setFormData({ ...formData, gender: value })}
+                  onValueChange={(value: "male" | "female") =>
+                    setFormData({ ...formData, gender: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
@@ -172,19 +188,30 @@ const SignupPage = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 font-semibold h-11">
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 font-semibold h-11"
+              >
                 Create Account
               </Button>
-              <div className="text-center pt-2">
+              <div className="text-center pt-1">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Already have an account?{' '}
-                  <Link to="/login" className="text-blue-600 hover:underline font-bold transition-colors">
+                  Already have an account?{" "}
+                  <Link
+                    to="/login"
+                    className="text-blue-600 hover:underline font-bold transition-colors"
+                  >
                     Sign in
                   </Link>
                 </p>
               </div>
             </form>
           </CardContent>
+          <CardFooter className="pt-0 md:hidden">
+            <div className="w-full flex justify-start px-4">
+              <BackButton />
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </div>
