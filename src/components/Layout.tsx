@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import CustomCursor from "./CustomCursor";
 import { ReactNode } from "react";
 
 interface LayoutProps {
@@ -14,6 +15,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-foreground transition-colors duration-300 flex flex-col">
+      <CustomCursor />
       <Navbar />
       <main className="flex-grow">{children}</main>
       {shouldShowFooter && <Footer />}
