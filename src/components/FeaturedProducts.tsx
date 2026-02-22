@@ -1,19 +1,19 @@
-
-import { products } from '../data/products';
-import ProductCard from './ProductCard';
+import { products } from "../data/products";
+import ProductCard from "./ProductCard";
 
 const FeaturedProducts = () => {
-  const featuredProducts = products.filter(product => product.featured);
+  const featuredProducts = products.filter((product) => product.featured);
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
+    <section className="py-16 bg-gray-50 dark:bg-black transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Featured Products
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-            Discover our handpicked selection of the latest and greatest tech products
+            Discover our handpicked selection of the latest and greatest tech
+            products
           </p>
         </div>
 

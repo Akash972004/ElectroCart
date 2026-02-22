@@ -50,7 +50,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-start md:items-center justify-center p-4 pt-24 md:pt-12 relative transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-start md:items-center justify-center p-4 pt-24 md:pt-12 relative transition-colors duration-300">
       {/* Back Button positioned outside - more compact on small screens */}
       <div className="hidden md:block absolute md:top-28 md:left-8">
         <BackButton />
@@ -78,7 +78,7 @@ const LoginPage = () => {
         </div>
 
         {/* Form Section */}
-        <Card className="w-full max-w-md border-gray-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900/50 backdrop-blur-sm mx-auto">
+        <Card className="w-full max-w-md border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-black backdrop-blur-sm mx-auto">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
               Sign In

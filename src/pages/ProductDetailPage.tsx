@@ -1,29 +1,50 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Truck, ShieldCheck, RefreshCw, Star } from 'lucide-react';
-import { products } from '../data/products';
-import { useCart } from '../hooks/useCart';
-import { useAuth } from '../hooks/useAuth';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { toast } from 'sonner';
-import BackButton from '../components/BackButton';
+import { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  ShoppingCart,
+  Truck,
+  ShieldCheck,
+  RefreshCw,
+  Star,
+  Heart,
+} from "lucide-react";
+import { products } from "../data/products";
+import { useCart } from "../hooks/useCart";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { toast } from "sonner";
+import BackButton from "../components/BackButton";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const product = products.find(p => p.id === id);
+  const product = products.find((p) => p.id === id);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      const savedWishlist = localStorage.getItem("electroWishlist");
+      if (savedWishlist) {
+        const wishlistIds = JSON.parse(savedWishlist);
+        setIsInWishlist(wishlistIds.includes(product.id));
+      }
+    }
+  }, [product]);
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-40 pb-16 transition-colors duration-300">
+      <div className="min-h-screen bg-gray-50 dark:bg-black pt-40 pb-16 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <BackButton className="mb-8" />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Product Not Found
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-8">The product you're looking for doesn't exist.</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
+            The product you're looking for doesn't exist.
+          </p>
           <Button asChild>
             <Link to="/">Back to Home</Link>
           </Button>
@@ -34,23 +55,40 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!user) {
-      toast.error('Please login to add items to cart');
-      navigate('/login');
+      toast.error("Please login to add items to cart");
+      navigate("/login");
       return;
     }
     addToCart(product);
-    toast.success('Added to cart');
+    toast.success("Added to cart");
+  };
+
+  const toggleWishlist = () => {
+    const savedWishlist = localStorage.getItem("electroWishlist");
+    let wishlistIds = savedWishlist ? JSON.parse(savedWishlist) : [];
+
+    if (isInWishlist) {
+      wishlistIds = wishlistIds.filter((id: string) => id !== product.id);
+      setIsInWishlist(false);
+      toast.success("Removed from wishlist");
+    } else {
+      wishlistIds.push(product.id);
+      setIsInWishlist(true);
+      toast.success("Added to wishlist");
+    }
+
+    localStorage.setItem("electroWishlist", JSON.stringify(wishlistIds));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-24 sm:pt-32 pb-16 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-black pt-24 sm:pt-32 pb-16 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton className="mb-6" />
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-black rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Left Column: Image and Key Features */}
-            <div className="flex flex-col border-b lg:border-b-0 lg:border-r border-gray-100 dark:border-slate-800">
-              <div className="bg-gray-100 dark:bg-slate-800 relative group aspect-square overflow-hidden">
+            <div className="flex flex-col border-b lg:border-b-0 lg:border-r border-gray-100 dark:border-gray-700">
+              <div className="bg-gray-100 dark:bg-gray-800 relative group aspect-square overflow-hidden">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -83,7 +121,7 @@ const ProductDetailPage = () => {
                 </h1>
                 <div className="flex items-baseline space-x-4 mb-8">
                   <span className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                    ₹{product.price.toLocaleString('en-IN')}
+                    ₹{product.price.toLocaleString("en-IN")}
                   </span>
                   <span className="text-xl text-gray-400 line-through">
                     ₹{Math.round(product.price * 1.2)}
@@ -108,8 +146,14 @@ const ProductDetailPage = () => {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {product.specs.map((spec, index) => (
-                      <div key={index} className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 p-3 rounded-xl">
-                        <ShieldCheck size={18} className="text-blue-500 mr-3 flex-shrink-0" />
+                      <div
+                        key={index}
+                        className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl"
+                      >
+                        <ShieldCheck
+                          size={18}
+                          className="text-blue-500 mr-3 flex-shrink-0"
+                        />
                         <span className="text-sm font-medium">{spec}</span>
                       </div>
                     ))}
@@ -118,7 +162,7 @@ const ProductDetailPage = () => {
               </div>
 
               <div className="space-y-4 mt-8 lg:mt-auto">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm text-gray-500 dark:text-gray-400 gap-4 bg-gray-50 dark:bg-slate-800 p-4 rounded-xl">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm text-gray-500 dark:text-gray-400 gap-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl">
                   <div className="flex items-center">
                     <Truck size={18} className="mr-2 text-blue-500" />
                     <span>Free Delivery</span>
@@ -133,14 +177,31 @@ const ProductDetailPage = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleAddToCart}
-                  size="lg"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 rounded-xl shadow-lg shadow-blue-600/20"
-                >
-                  <ShoppingCart size={22} className="mr-2" />
-                  Add to Cart
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={toggleWishlist}
+                    size="lg"
+                    variant="outline"
+                    className="py-6 rounded-xl border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
+                  >
+                    <Heart
+                      size={22}
+                      className={`${
+                        isInWishlist
+                          ? "text-red-500 fill-red-500"
+                          : "text-gray-600 dark:text-gray-400"
+                      }`}
+                    />
+                  </Button>
+                  <Button
+                    onClick={handleAddToCart}
+                    size="lg"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 rounded-xl shadow-lg shadow-blue-600/20"
+                  >
+                    <ShoppingCart size={22} className="mr-2" />
+                    Add to Cart
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,15 +1,20 @@
-
-import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus } from 'lucide-react';
-import { useCart } from '../hooks/useCart';
-import { useOrders } from '../hooks/useOrders';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { useToast } from '../hooks/use-toast';
-import BackButton from '../components/BackButton';
+import { Link } from "react-router-dom";
+import { Trash2, Plus, Minus } from "lucide-react";
+import { useCart } from "../hooks/useCart";
+import { useOrders } from "../hooks/useOrders";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { useToast } from "../hooks/use-toast";
+import BackButton from "../components/BackButton";
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    updateQuantity,
+    getTotalPrice,
+    clearCart,
+  } = useCart();
   const { placeOrder } = useOrders();
   const { toast } = useToast();
 
@@ -27,7 +32,7 @@ const CartPage = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-40 pb-16 transition-colors duration-300">
+      <div className="min-h-screen bg-gray-50 dark:bg-black pt-40 pb-16 transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <BackButton className="mb-8" />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -45,7 +50,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-32 pb-16 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-black pt-32 pb-16 transition-colors duration-300">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton className="mb-4" />
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
@@ -54,7 +59,10 @@ const CartPage = () => {
 
         <div className="space-y-4 mb-8">
           {cartItems.map((item) => (
-            <Card key={item.id}>
+            <Card
+              key={item.id}
+              className="border border-gray-200 dark:border-gray-700 dark:bg-black hover:shadow-md dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all duration-300"
+            >
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -67,7 +75,9 @@ const CartPage = () => {
                       <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-1">
                         {item.name}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-400">₹{item.price}</p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        ₹{item.price}
+                      </p>
                     </div>
                   </div>
 
@@ -75,7 +85,9 @@ const CartPage = () => {
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {item.name}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">₹{item.price}</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      ₹{item.price}
+                    </p>
                   </div>
 
                   <div className="flex items-center justify-between w-full sm:w-auto gap-4 mt-2 sm:mt-0">
@@ -83,16 +95,22 @@ const CartPage = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
                         className="h-8 w-8 p-0"
                       >
                         <Minus size={14} />
                       </Button>
-                      <span className="w-8 text-center text-sm">{item.quantity}</span>
+                      <span className="w-8 text-center text-sm">
+                        {item.quantity}
+                      </span>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
                         className="h-8 w-8 p-0"
                       >
                         <Plus size={14} />
@@ -122,7 +140,9 @@ const CartPage = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">Total:</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                Total:
+              </span>
               <span className="text-2xl font-bold text-blue-600">
                 ₹{getTotalPrice()}
               </span>

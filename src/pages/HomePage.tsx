@@ -1,6 +1,7 @@
-import Hero from '../components/Hero';
-import FeaturedCategories from '../components/FeaturedCategories';
-import TopRatedProducts from '../components/TopRatedProducts';
+import Hero from "../components/Hero";
+import FeaturedCategories from "../components/FeaturedCategories";
+import TopRatedProducts from "../components/TopRatedProducts";
+import ContactSection from "../components/ContactSection";
 
 const HomePage = () => {
   return (
@@ -8,6 +9,7 @@ const HomePage = () => {
       <Hero />
       <TopRatedProducts />
       <FeaturedCategories />
+      <ContactSection />
     </div>
   );
 };
